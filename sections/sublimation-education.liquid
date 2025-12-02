@@ -1,0 +1,674 @@
+{% comment %}
+  Shelzy's Designs - Sublimation vs Vinyl Education Section
+  Explains the key competitive advantage: sublimation printing vs vinyl decals
+  Converts visitors by educating them on quality difference
+{% endcomment %}
+
+<section class="sublimation-edu" data-section-id="{{ section.id }}" style="background-color: {{ section.settings.background_color }};">
+  <div class="sublimation-edu__container">
+    {% if section.settings.badge_text != blank %}
+      <span class="sublimation-edu__badge">{{ section.settings.badge_text }}</span>
+    {% endif %}
+    
+    <h2 class="sublimation-edu__title">{{ section.settings.title }}</h2>
+    
+    {% if section.settings.subtitle != blank %}
+      <p class="sublimation-edu__subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+
+    <div class="sublimation-edu__comparison">
+      <!-- Our Method - Sublimation -->
+      <div class="sublimation-edu__card sublimation-edu__card--winner">
+        <div class="sublimation-edu__card-header">
+          <span class="sublimation-edu__card-badge sublimation-edu__card-badge--winner">{{ section.settings.our_badge }}</span>
+          <h3 class="sublimation-edu__card-title">{{ section.settings.our_title }}</h3>
+        </div>
+        
+        {% if section.settings.our_image != blank %}
+          <div class="sublimation-edu__card-image">
+            <img src="{{ section.settings.our_image | image_url: width: 400 }}" alt="Sublimation printing example" loading="lazy">
+          </div>
+        {% else %}
+          <div class="sublimation-edu__card-image sublimation-edu__card-image--placeholder">
+            <svg viewBox="0 0 100 80" fill="none" stroke="currentColor">
+              <rect x="25" y="10" width="50" height="60" rx="5" stroke-width="2"/>
+              <path d="M35 35 Q50 20 65 35 Q50 50 35 35" stroke-width="2" fill="rgba(236, 72, 153, 0.2)"/>
+              <text x="50" y="75" text-anchor="middle" fill="currentColor" font-size="6" stroke="none">Ink Infused</text>
+            </svg>
+          </div>
+        {% endif %}
+
+        <ul class="sublimation-edu__features">
+          {% for i in (1..5) %}
+            {% assign feature_key = 'our_feature_' | append: i %}
+            {% if section.settings[feature_key] != blank %}
+              <li class="sublimation-edu__feature sublimation-edu__feature--positive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>{{ section.settings[feature_key] }}</span>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- VS Divider -->
+      <div class="sublimation-edu__vs">
+        <span>VS</span>
+      </div>
+
+      <!-- Competition - Vinyl -->
+      <div class="sublimation-edu__card sublimation-edu__card--loser">
+        <div class="sublimation-edu__card-header">
+          <span class="sublimation-edu__card-badge sublimation-edu__card-badge--loser">{{ section.settings.their_badge }}</span>
+          <h3 class="sublimation-edu__card-title">{{ section.settings.their_title }}</h3>
+        </div>
+        
+        {% if section.settings.their_image != blank %}
+          <div class="sublimation-edu__card-image">
+            <img src="{{ section.settings.their_image | image_url: width: 400 }}" alt="Vinyl decal example" loading="lazy">
+          </div>
+        {% else %}
+          <div class="sublimation-edu__card-image sublimation-edu__card-image--placeholder sublimation-edu__card-image--negative">
+            <svg viewBox="0 0 100 80" fill="none" stroke="currentColor">
+              <rect x="25" y="10" width="50" height="60" rx="5" stroke-width="2"/>
+              <path d="M35 30 L45 35 L55 25 L65 40" stroke-width="2" stroke-dasharray="4 2"/>
+              <path d="M40 45 Q50 55 60 50" stroke-width="1" opacity="0.5"/>
+              <text x="50" y="75" text-anchor="middle" fill="currentColor" font-size="6" stroke="none">Peeling Sticker</text>
+            </svg>
+          </div>
+        {% endif %}
+
+        <ul class="sublimation-edu__features">
+          {% for i in (1..5) %}
+            {% assign feature_key = 'their_feature_' | append: i %}
+            {% if section.settings[feature_key] != blank %}
+              <li class="sublimation-edu__feature sublimation-edu__feature--negative">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                <span>{{ section.settings[feature_key] }}</span>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Guarantee Box -->
+    <div class="sublimation-edu__guarantee">
+      <div class="sublimation-edu__guarantee-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10"/>
+        </svg>
+      </div>
+      <div class="sublimation-edu__guarantee-content">
+        <h4 class="sublimation-edu__guarantee-title">{{ section.settings.guarantee_title }}</h4>
+        <p class="sublimation-edu__guarantee-text">{{ section.settings.guarantee_text }}</p>
+      </div>
+    </div>
+
+    {% if section.settings.cta_text != blank %}
+      <div class="sublimation-edu__cta-wrap">
+        <a href="{{ section.settings.cta_link }}" class="sublimation-edu__cta">
+          {{ section.settings.cta_text }}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .sublimation-edu {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+
+  .sublimation-edu__container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+
+  .sublimation-edu__badge {
+    display: inline-block;
+    background: {{ section.settings.badge_background }};
+    color: {{ section.settings.badge_color }};
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .sublimation-edu__title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 1rem;
+    line-height: 1.2;
+  }
+
+  .sublimation-edu__subtitle {
+    font-size: 1.125rem;
+    color: {{ section.settings.subtitle_color }};
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+  }
+
+  .sublimation-edu__comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    margin-bottom: 3rem;
+  }
+
+  .sublimation-edu__card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .sublimation-edu__card:hover {
+    transform: translateY(-4px);
+  }
+
+  .sublimation-edu__card--winner {
+    border: 3px solid {{ section.settings.positive_color }};
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+  }
+
+  .sublimation-edu__card--winner:hover {
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+  }
+
+  .sublimation-edu__card--loser {
+    border: 2px solid #E5E7EB;
+    opacity: 0.85;
+  }
+
+  .sublimation-edu__card-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .sublimation-edu__card-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .sublimation-edu__card-badge--winner {
+    background: {{ section.settings.positive_color }};
+    color: white;
+  }
+
+  .sublimation-edu__card-badge--loser {
+    background: #E5E7EB;
+    color: #6B7280;
+  }
+
+  .sublimation-edu__card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    margin: 0;
+  }
+
+  .sublimation-edu__card-image {
+    height: 140px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background: #F9FAFB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sublimation-edu__card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sublimation-edu__card-image--placeholder {
+    color: {{ section.settings.positive_color }};
+  }
+
+  .sublimation-edu__card-image--placeholder svg {
+    width: 80px;
+    height: auto;
+  }
+
+  .sublimation-edu__card-image--negative {
+    color: #9CA3AF;
+  }
+
+  .sublimation-edu__features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sublimation-edu__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .sublimation-edu__feature svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+  }
+
+  .sublimation-edu__feature--positive svg {
+    color: {{ section.settings.positive_color }};
+  }
+
+  .sublimation-edu__feature--positive span {
+    color: {{ section.settings.text_color }};
+  }
+
+  .sublimation-edu__feature--negative svg {
+    color: {{ section.settings.negative_color }};
+  }
+
+  .sublimation-edu__feature--negative span {
+    color: #9CA3AF;
+  }
+
+  .sublimation-edu__vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sublimation-edu__vs span {
+    background: {{ section.settings.badge_background }};
+    color: {{ section.settings.badge_color }};
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sublimation-edu__guarantee {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    background: linear-gradient(135deg, {{ section.settings.positive_color }}10, {{ section.settings.positive_color }}05);
+    border: 2px solid {{ section.settings.positive_color }}30;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .sublimation-edu__guarantee-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    background: {{ section.settings.positive_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  .sublimation-edu__guarantee-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .sublimation-edu__guarantee-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: {{ section.settings.title_color }};
+    margin: 0 0 0.25rem;
+  }
+
+  .sublimation-edu__guarantee-text {
+    font-size: 0.95rem;
+    color: {{ section.settings.subtitle_color }};
+    margin: 0;
+  }
+
+  .sublimation-edu__cta-wrap {
+    text-align: center;
+  }
+
+  .sublimation-edu__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: {{ section.settings.cta_background }};
+    color: {{ section.settings.cta_color }};
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+  }
+
+  .sublimation-edu__cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+    filter: brightness(1.1);
+  }
+
+  @media (max-width: 899px) {
+    .sublimation-edu__comparison {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .sublimation-edu__vs {
+      order: -1;
+    }
+
+    .sublimation-edu__card--winner {
+      order: -2;
+    }
+
+    .sublimation-edu__guarantee {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Sublimation vs Vinyl",
+  "tag": "section",
+  "class": "section-sublimation-edu",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Our Advantage"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Why Our Bottles Last a Lifetime"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "We use professional sublimation printing—not cheap vinyl stickers. Here's why that matters."
+    },
+    {
+      "type": "header",
+      "content": "Our Method (Sublimation)"
+    },
+    {
+      "type": "text",
+      "id": "our_badge",
+      "label": "Badge Text",
+      "default": "Our Method"
+    },
+    {
+      "type": "text",
+      "id": "our_title",
+      "label": "Title",
+      "default": "Sublimation Printing"
+    },
+    {
+      "type": "image_picker",
+      "id": "our_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "our_feature_1",
+      "label": "Feature 1",
+      "default": "Ink permanently fused INTO the bottle coating"
+    },
+    {
+      "type": "text",
+      "id": "our_feature_2",
+      "label": "Feature 2",
+      "default": "Completely smooth surface—nothing to peel"
+    },
+    {
+      "type": "text",
+      "id": "our_feature_3",
+      "label": "Feature 3",
+      "default": "Dishwasher safe without damage"
+    },
+    {
+      "type": "text",
+      "id": "our_feature_4",
+      "label": "Feature 4",
+      "default": "Vibrant colors that never fade"
+    },
+    {
+      "type": "text",
+      "id": "our_feature_5",
+      "label": "Feature 5",
+      "default": "Professional, permanent finish"
+    },
+    {
+      "type": "header",
+      "content": "Competition (Vinyl)"
+    },
+    {
+      "type": "text",
+      "id": "their_badge",
+      "label": "Badge Text",
+      "default": "Others Use"
+    },
+    {
+      "type": "text",
+      "id": "their_title",
+      "label": "Title",
+      "default": "Vinyl Decals"
+    },
+    {
+      "type": "image_picker",
+      "id": "their_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "their_feature_1",
+      "label": "Feature 1",
+      "default": "Sticker applied ON TOP of the surface"
+    },
+    {
+      "type": "text",
+      "id": "their_feature_2",
+      "label": "Feature 2",
+      "default": "Edges lift and peel over time"
+    },
+    {
+      "type": "text",
+      "id": "their_feature_3",
+      "label": "Feature 3",
+      "default": "Can peel off in dishwasher"
+    },
+    {
+      "type": "text",
+      "id": "their_feature_4",
+      "label": "Feature 4",
+      "default": "Colors fade with sun exposure"
+    },
+    {
+      "type": "text",
+      "id": "their_feature_5",
+      "label": "Feature 5",
+      "default": "Looks worn after months of use"
+    },
+    {
+      "type": "header",
+      "content": "Guarantee Section"
+    },
+    {
+      "type": "text",
+      "id": "guarantee_title",
+      "label": "Guarantee Title",
+      "default": "Your Name Won't Peel. Ever. That's Our Guarantee."
+    },
+    {
+      "type": "textarea",
+      "id": "guarantee_text",
+      "label": "Guarantee Text",
+      "default": "We're so confident in our sublimation quality that we back every bottle with a lifetime print guarantee."
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Text",
+      "default": "Shop Personalized Bottles"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Link",
+      "default": "/collections/personalized-bottles"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Badge Background",
+      "default": "#EC4899"
+    },
+    {
+      "type": "color",
+      "id": "badge_color",
+      "label": "Badge Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#6B7280"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#374151"
+    },
+    {
+      "type": "color",
+      "id": "positive_color",
+      "label": "Positive/Winner Color",
+      "default": "#10B981"
+    },
+    {
+      "type": "color",
+      "id": "negative_color",
+      "label": "Negative Color",
+      "default": "#EF4444"
+    },
+    {
+      "type": "color",
+      "id": "cta_background",
+      "label": "CTA Background",
+      "default": "#EC4899"
+    },
+    {
+      "type": "color",
+      "id": "cta_color",
+      "label": "CTA Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sublimation vs Vinyl"
+    }
+  ]
+}
+{% endschema %}

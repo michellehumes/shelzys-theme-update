@@ -1,0 +1,725 @@
+{% comment %}
+  Shelzy's Designs - Email Capture Popup
+  10% off welcome popup with Klaviyo integration
+  Triggers on delay and exit intent for maximum capture
+{% endcomment %}
+
+<div id="email-popup-{{ section.id }}" class="email-popup" data-section-id="{{ section.id }}" aria-hidden="true" role="dialog" aria-labelledby="popup-title-{{ section.id }}">
+  <div class="email-popup__overlay"></div>
+  
+  <div class="email-popup__modal">
+    <button class="email-popup__close" aria-label="Close popup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <div class="email-popup__content">
+      {% if section.settings.image != blank %}
+        <div class="email-popup__image">
+          <img 
+            src="{{ section.settings.image | image_url: width: 600 }}" 
+            alt="{{ section.settings.headline }}"
+            loading="lazy"
+          >
+        </div>
+      {% endif %}
+
+      <div class="email-popup__form-container">
+        {% if section.settings.badge_text != blank %}
+          <span class="email-popup__badge">{{ section.settings.badge_text }}</span>
+        {% endif %}
+
+        <h2 id="popup-title-{{ section.id }}" class="email-popup__headline">{{ section.settings.headline }}</h2>
+        
+        {% if section.settings.description != blank %}
+          <p class="email-popup__description">{{ section.settings.description }}</p>
+        {% endif %}
+
+        <form class="email-popup__form" id="popup-form-{{ section.id }}">
+          <div class="email-popup__input-wrap">
+            <input 
+              type="email" 
+              name="email" 
+              placeholder="{{ section.settings.placeholder_text }}"
+              required
+              autocomplete="email"
+              class="email-popup__input"
+            >
+          </div>
+          
+          {% if section.settings.show_name_field %}
+            <div class="email-popup__input-wrap">
+              <input 
+                type="text" 
+                name="firstName" 
+                placeholder="First Name (optional)"
+                autocomplete="given-name"
+                class="email-popup__input"
+              >
+            </div>
+          {% endif %}
+
+          <button type="submit" class="email-popup__submit">
+            <span class="email-popup__submit-text">{{ section.settings.button_text }}</span>
+            <span class="email-popup__submit-loading" style="display: none;">
+              <svg class="email-popup__spinner" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.416" stroke-dashoffset="10"/>
+              </svg>
+            </span>
+          </button>
+        </form>
+
+        <div class="email-popup__success" style="display: none;">
+          <div class="email-popup__success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <h3 class="email-popup__success-title">{{ section.settings.success_title }}</h3>
+          <p class="email-popup__success-text">{{ section.settings.success_message }}</p>
+          {% if section.settings.discount_code != blank %}
+            <div class="email-popup__discount-code">
+              <span class="email-popup__discount-label">Your code:</span>
+              <span class="email-popup__discount-value" id="discount-code-{{ section.id }}">{{ section.settings.discount_code }}</span>
+              <button class="email-popup__copy-btn" data-code="{{ section.settings.discount_code }}" aria-label="Copy discount code">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if section.settings.footer_text != blank %}
+          <p class="email-popup__footer">{{ section.settings.footer_text }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .email-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .email-popup.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .email-popup__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .email-popup__modal {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    max-width: {{ section.settings.popup_width }}px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .email-popup.active .email-popup__modal {
+    transform: scale(1) translateY(0);
+  }
+
+  .email-popup__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    color: #6B7280;
+  }
+
+  .email-popup__close:hover {
+    background: white;
+    color: #111827;
+    transform: rotate(90deg);
+  }
+
+  .email-popup__close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .email-popup__content {
+    display: flex;
+    flex-direction: {{ section.settings.layout }};
+  }
+
+  .email-popup__image {
+    flex: 0 0 45%;
+    min-height: 200px;
+  }
+
+  .email-popup__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .email-popup__form-container {
+    flex: 1;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .email-popup__badge {
+    display: inline-block;
+    background: {{ section.settings.accent_color }}15;
+    color: {{ section.settings.accent_color }};
+    padding: 0.375rem 1rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .email-popup__headline {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
+    line-height: 1.2;
+    margin: 0 0 0.75rem;
+  }
+
+  .email-popup__description {
+    font-size: 1rem;
+    color: {{ section.settings.subtext_color }};
+    line-height: 1.6;
+    margin: 0 0 1.5rem;
+    max-width: 320px;
+  }
+
+  .email-popup__form {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .email-popup__input-wrap {
+    width: 100%;
+  }
+
+  .email-popup__input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .email-popup__input:focus {
+    border-color: {{ section.settings.accent_color }};
+    box-shadow: 0 0 0 3px {{ section.settings.accent_color }}20;
+  }
+
+  .email-popup__input::placeholder {
+    color: #9CA3AF;
+  }
+
+  .email-popup__submit {
+    width: 100%;
+    padding: 1rem;
+    background: {{ section.settings.button_background }};
+    color: {{ section.settings.button_color }};
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .email-popup__submit:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  .email-popup__submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .email-popup__spinner {
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+
+  .email-popup__success {
+    text-align: center;
+  }
+
+  .email-popup__success-icon {
+    width: 60px;
+    height: 60px;
+    background: {{ section.settings.success_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: white;
+  }
+
+  .email-popup__success-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .email-popup__success-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 0.5rem;
+  }
+
+  .email-popup__success-text {
+    color: {{ section.settings.subtext_color }};
+    margin: 0 0 1.5rem;
+  }
+
+  .email-popup__discount-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: {{ section.settings.accent_color }}10;
+    border: 2px dashed {{ section.settings.accent_color }};
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+  }
+
+  .email-popup__discount-label {
+    font-size: 0.875rem;
+    color: {{ section.settings.subtext_color }};
+  }
+
+  .email-popup__discount-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: {{ section.settings.accent_color }};
+    letter-spacing: 0.05em;
+  }
+
+  .email-popup__copy-btn {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #6B7280;
+  }
+
+  .email-popup__copy-btn:hover {
+    border-color: {{ section.settings.accent_color }};
+    color: {{ section.settings.accent_color }};
+  }
+
+  .email-popup__copy-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .email-popup__footer {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    margin: 1rem 0 0;
+  }
+
+  @media (max-width: 599px) {
+    .email-popup__content {
+      flex-direction: column;
+    }
+    
+    .email-popup__image {
+      max-height: 180px;
+    }
+    
+    .email-popup__form-container {
+      padding: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const section = document.getElementById('email-popup-{{ section.id }}');
+    const form = document.getElementById('popup-form-{{ section.id }}');
+    const closeBtn = section.querySelector('.email-popup__close');
+    const overlay = section.querySelector('.email-popup__overlay');
+    const submitBtn = form.querySelector('.email-popup__submit');
+    const submitText = form.querySelector('.email-popup__submit-text');
+    const submitLoading = form.querySelector('.email-popup__submit-loading');
+    const successContainer = section.querySelector('.email-popup__success');
+    const copyBtn = section.querySelector('.email-popup__copy-btn');
+    
+    const storageKey = 'shelzys_popup_shown';
+    const showAfterDays = {{ section.settings.show_again_after }};
+    const showAfterDelay = {{ section.settings.show_after_delay }};
+    const showOnExit = {{ section.settings.show_on_exit_intent | json }};
+    const showAfterDelayEnabled = {{ section.settings.show_after_delay_enabled | json }};
+    const klaviyoListId = '{{ section.settings.klaviyo_list_id }}';
+
+    function shouldShowPopup() {
+      const lastShown = localStorage.getItem(storageKey);
+      if (!lastShown) return true;
+      
+      const daysSince = (Date.now() - parseInt(lastShown)) / (1000 * 60 * 60 * 24);
+      return daysSince >= showAfterDays;
+    }
+
+    function showPopup() {
+      if (!shouldShowPopup()) return;
+      section.classList.add('active');
+      section.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hidePopup() {
+      section.classList.remove('active');
+      section.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      localStorage.setItem(storageKey, Date.now().toString());
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      const email = form.querySelector('input[name="email"]').value;
+      const firstName = form.querySelector('input[name="firstName"]')?.value || '';
+      
+      submitBtn.disabled = true;
+      submitText.style.display = 'none';
+      submitLoading.style.display = 'block';
+
+      // Klaviyo integration
+      if (klaviyoListId && window._learnq) {
+        window._learnq.push(['identify', {
+          '$email': email,
+          '$first_name': firstName,
+          '$source': 'Popup - 10% Off'
+        }]);
+        
+        // If you have a specific list
+        fetch(`https://a.klaviyo.com/api/v2/list/${klaviyoListId}/subscribe?api_key={{ section.settings.klaviyo_api_key }}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            profiles: [{ email: email, first_name: firstName }]
+          })
+        }).catch(() => {});
+      }
+
+      // Also post to Shopify customer
+      fetch('/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `form_type=customer&email=${encodeURIComponent(email)}&tags=popup-signup`
+      }).catch(() => {});
+
+      // Show success
+      setTimeout(() => {
+        form.style.display = 'none';
+        successContainer.style.display = 'block';
+        localStorage.setItem(storageKey, Date.now().toString());
+      }, 800);
+    }
+
+    function handleExitIntent(e) {
+      if (e.clientY <= 0 && shouldShowPopup()) {
+        showPopup();
+        document.removeEventListener('mouseout', handleExitIntent);
+      }
+    }
+
+    // Event listeners
+    closeBtn.addEventListener('click', hidePopup);
+    overlay.addEventListener('click', hidePopup);
+    form.addEventListener('submit', handleSubmit);
+    
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const code = copyBtn.dataset.code;
+        navigator.clipboard.writeText(code).then(() => {
+          copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+          setTimeout(() => {
+            copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+          }, 2000);
+        });
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && section.classList.contains('active')) {
+        hidePopup();
+      }
+    });
+
+    // Triggers
+    if (showAfterDelayEnabled) {
+      setTimeout(showPopup, showAfterDelay);
+    }
+
+    if (showOnExit) {
+      document.addEventListener('mouseout', handleExitIntent);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Email Popup",
+  "tag": "section",
+  "class": "section-email-popup",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Add a lifestyle product image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Exclusive Offer"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Get 10% Off Your First Order"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Join the Shelzy's family and receive exclusive offers, new product alerts, and personalization tips."
+    },
+    {
+      "type": "text",
+      "id": "placeholder_text",
+      "label": "Email Placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_name_field",
+      "label": "Show First Name Field",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Get My 10% Off"
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer Text",
+      "default": "No spam, unsubscribe anytime."
+    },
+    {
+      "type": "header",
+      "content": "Success State"
+    },
+    {
+      "type": "text",
+      "id": "success_title",
+      "label": "Success Title",
+      "default": "You're In! 🎉"
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "Check your inbox for your 10% off code. Welcome to the family!"
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "Discount Code to Display",
+      "default": "WELCOME10"
+    },
+    {
+      "type": "header",
+      "content": "Klaviyo Integration"
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_list_id",
+      "label": "Klaviyo List ID",
+      "info": "Find this in Klaviyo → Lists & Segments"
+    },
+    {
+      "type": "text",
+      "id": "klaviyo_api_key",
+      "label": "Klaviyo Public API Key",
+      "info": "Found in Klaviyo → Account → Settings → API Keys"
+    },
+    {
+      "type": "header",
+      "content": "Trigger Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_after_delay_enabled",
+      "label": "Show After Delay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "show_after_delay",
+      "min": 2000,
+      "max": 30000,
+      "step": 1000,
+      "unit": "ms",
+      "label": "Delay Before Showing",
+      "default": 10000
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_exit_intent",
+      "label": "Show on Exit Intent",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "show_again_after",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "unit": "days",
+      "label": "Show Again After",
+      "default": 7
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "row", "label": "Image Left" },
+        { "value": "row-reverse", "label": "Image Right" },
+        { "value": "column", "label": "Image Top" }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "range",
+      "id": "popup_width",
+      "min": 400,
+      "max": 700,
+      "step": 20,
+      "unit": "px",
+      "label": "Popup Width",
+      "default": 560
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#EC4899"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#111827"
+    },
+    {
+      "type": "color",
+      "id": "subtext_color",
+      "label": "Subtext Color",
+      "default": "#6B7280"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button Background",
+      "default": "#EC4899"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success Color",
+      "default": "#10B981"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Email Popup"
+    }
+  ]
+}
+{% endschema %}

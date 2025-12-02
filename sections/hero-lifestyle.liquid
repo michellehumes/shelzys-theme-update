@@ -1,0 +1,531 @@
+{% comment %}
+  Shelzy's Designs - Hero Lifestyle Slideshow
+  A stunning hero section featuring lifestyle photography with couples enjoying personalized water bottles
+  at beaches, pools, and resorts. Showcases the sublimation quality advantage.
+{% endcomment %}
+
+{{ 'hero-lifestyle.css' | asset_url | stylesheet_tag }}
+
+<div class="hero-lifestyle" data-section-id="{{ section.id }}">
+  <div class="hero-slideshow" id="hero-slideshow-{{ section.id }}">
+    {% for block in section.blocks %}
+      {% if block.type == 'slide' %}
+        <div class="hero-slide {% if forloop.first %}active{% endif %}" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <picture>
+              <source media="(max-width: 749px)" srcset="{{ block.settings.image | image_url: width: 750 }}">
+              <source media="(min-width: 750px)" srcset="{{ block.settings.image | image_url: width: 1920 }}">
+              <img 
+                src="{{ block.settings.image | image_url: width: 1920 }}" 
+                alt="{{ block.settings.image.alt | default: section.settings.headline }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}"
+                class="hero-slide__image"
+              >
+            </picture>
+          {% else %}
+            <div class="hero-slide__placeholder" style="background: linear-gradient(135deg, {{ section.settings.placeholder_color_1 }}, {{ section.settings.placeholder_color_2 }});">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                <text x="50" y="55" text-anchor="middle" fill="white" font-size="6">Add Lifestyle Photo</text>
+              </svg>
+            </div>
+          {% endif %}
+          <div class="hero-slide__overlay" style="background: rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }});"></div>
+        </div>
+      {% endif %}
+    {% endfor %}
+    
+    {% if section.blocks.size == 0 %}
+      <div class="hero-slide active">
+        <div class="hero-slide__placeholder" style="background: linear-gradient(135deg, #EC4899, #F472B6);">
+        </div>
+        <div class="hero-slide__overlay" style="background: rgba(0,0,0,0.3);"></div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-content__inner">
+      {% if section.settings.badge_text != blank %}
+        <span class="hero-badge">{{ section.settings.badge_text }}</span>
+      {% endif %}
+      
+      <h1 class="hero-headline">{{ section.settings.headline }}</h1>
+      
+      {% if section.settings.subheadline != blank %}
+        <p class="hero-subheadline">{{ section.settings.subheadline }}</p>
+      {% endif %}
+      
+      {% if section.settings.cta_text != blank %}
+        <a href="{{ section.settings.cta_link }}" class="hero-cta">
+          {{ section.settings.cta_text }}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      {% endif %}
+      
+      {% if section.settings.secondary_cta_text != blank %}
+        <a href="{{ section.settings.secondary_cta_link }}" class="hero-cta hero-cta--secondary">
+          {{ section.settings.secondary_cta_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if section.blocks.size > 1 %}
+    <div class="hero-nav">
+      <button class="hero-nav__button hero-nav__prev" aria-label="Previous slide">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <div class="hero-nav__dots">
+        {% for block in section.blocks %}
+          {% if block.type == 'slide' %}
+            <button class="hero-nav__dot {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"></button>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <button class="hero-nav__button hero-nav__next" aria-label="Next slide">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .hero-lifestyle {
+    position: relative;
+    width: 100%;
+    height: {{ section.settings.section_height }}vh;
+    min-height: 500px;
+    max-height: 900px;
+    overflow: hidden;
+  }
+
+  .hero-slideshow {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+
+  .hero-slide.active {
+    opacity: 1;
+  }
+
+  .hero-slide__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-slide__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-slide__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    z-index: 10;
+  }
+
+  .hero-content__inner {
+    text-align: center;
+    max-width: 800px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: {{ section.settings.badge_background }};
+    color: {{ section.settings.badge_color }};
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-headline {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
+    line-height: 1.15;
+    margin: 0 0 1.25rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .hero-subheadline {
+    font-size: clamp(1rem, 2.5vw, 1.35rem);
+    color: {{ section.settings.text_color }};
+    line-height: 1.6;
+    margin: 0 0 2rem;
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: {{ section.settings.cta_background }};
+    color: {{ section.settings.cta_color }};
+    padding: 1rem 2rem;
+    border-radius: {{ section.settings.cta_border_radius }}px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    margin: 0 0.5rem;
+  }
+
+  .hero-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    filter: brightness(1.1);
+  }
+
+  .hero-cta--secondary {
+    background: transparent;
+    border: 2px solid {{ section.settings.text_color }};
+    color: {{ section.settings.text_color }};
+    box-shadow: none;
+  }
+
+  .hero-cta--secondary:hover {
+    background: {{ section.settings.text_color }};
+    color: {{ section.settings.cta_background }};
+  }
+
+  .hero-nav {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 15;
+  }
+
+  .hero-nav__button {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    backdrop-filter: blur(4px);
+  }
+
+  .hero-nav__button:hover {
+    background: rgba(255,255,255,0.4);
+  }
+
+  .hero-nav__dots {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .hero-nav__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.8);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+
+  .hero-nav__dot.active,
+  .hero-nav__dot:hover {
+    background: white;
+  }
+
+  @media (max-width: 749px) {
+    .hero-lifestyle {
+      min-height: 400px;
+    }
+    
+    .hero-content {
+      padding: 1rem;
+    }
+    
+    .hero-cta {
+      display: flex;
+      justify-content: center;
+      margin: 0.5rem 0;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const section = document.querySelector('[data-section-id="{{ section.id }}"]');
+    const slides = section.querySelectorAll('.hero-slide');
+    const dots = section.querySelectorAll('.hero-nav__dot');
+    const prevBtn = section.querySelector('.hero-nav__prev');
+    const nextBtn = section.querySelector('.hero-nav__next');
+    let currentSlide = 0;
+    let autoplayInterval;
+    const autoplayEnabled = {{ section.settings.autoplay | json }};
+    const autoplaySpeed = {{ section.settings.autoplay_speed }};
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      showSlide((currentSlide + 1) % slides.length);
+    }
+
+    function prevSlide() {
+      showSlide((currentSlide - 1 + slides.length) % slides.length);
+    }
+
+    function startAutoplay() {
+      if (autoplayEnabled && slides.length > 1) {
+        autoplayInterval = setInterval(nextSlide, autoplaySpeed);
+      }
+    }
+
+    function stopAutoplay() {
+      clearInterval(autoplayInterval);
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoplay(); prevSlide(); startAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoplay(); nextSlide(); startAutoplay(); });
+    
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => { stopAutoplay(); showSlide(i); startAutoplay(); });
+    });
+
+    section.addEventListener('mouseenter', stopAutoplay);
+    section.addEventListener('mouseleave', startAutoplay);
+
+    startAutoplay();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hero Lifestyle Slideshow",
+  "tag": "section",
+  "class": "section-hero-lifestyle",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Sublimation Quality"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Premium Personalized Water Bottles That Last Forever"
+    },
+    {
+      "type": "textarea",
+      "id": "subheadline",
+      "label": "Subheadline",
+      "default": "Sublimation printing means your name is permanently infused—no peeling, no fading. Ever."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Primary CTA Text",
+      "default": "Customize Yours — Starting at $24.99"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Primary CTA Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_text",
+      "label": "Secondary CTA Text"
+    },
+    {
+      "type": "url",
+      "id": "secondary_cta_link",
+      "label": "Secondary CTA Link"
+    },
+    {
+      "type": "header",
+      "content": "Slideshow Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 3000,
+      "max": 10000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Autoplay Speed",
+      "default": 5000
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Section Height",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Badge Background",
+      "default": "#EC4899"
+    },
+    {
+      "type": "color",
+      "id": "badge_color",
+      "label": "Badge Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_background",
+      "label": "CTA Background",
+      "default": "#EC4899"
+    },
+    {
+      "type": "color",
+      "id": "cta_color",
+      "label": "CTA Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "cta_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "CTA Border Radius",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color_1",
+      "label": "Placeholder Gradient Start",
+      "default": "#EC4899"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color_2",
+      "label": "Placeholder Gradient End",
+      "default": "#F472B6"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Slide Image",
+          "info": "Recommended: 1920x1080px lifestyle photos"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Lifestyle Slideshow",
+      "blocks": [
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
